@@ -11,6 +11,7 @@ import com.prestutti.presentation.home.HomeScreen
 import com.prestutti.presentation.loan_detail.LoanDetailScreen
 import com.prestutti.presentation.login.LoginScreen
 import com.prestutti.presentation.profile.ProfileScreen
+import com.prestutti.presentation.register.RegisterScreen
 
 object Routes {
     const val LOGIN        = "login"
@@ -18,6 +19,8 @@ object Routes {
     const val ADD_LOAN     = "add_loan/{isLent}"
     const val LOAN_DETAIL  = "loan_detail/{loanId}"
     const val PROFILE      = "profile"
+
+    const val REGISTER = "register"
 
     fun addLoan(isLent: Boolean) = "add_loan/$isLent"
     fun loanDetail(id: Long)     = "loan_detail/$id"
@@ -32,8 +35,15 @@ fun PrestuttiNavGraph(startDestination: String = Routes.LOGIN) {
         composable(Routes.LOGIN) {
             LoginScreen(
                 onNavigateToHome     = { navController.navigate(Routes.HOME) { popUpTo(Routes.LOGIN) { inclusive = true } } },
-                onNavigateToRegister = { /* TODO: RegisterScreen */ },
+                onNavigateToRegister = { navController.navigate(Routes.REGISTER) },
                 onNavigateToForgotPassword = { /* TODO: ForgotPasswordScreen */ }
+            )
+        }
+
+        composable(Routes.REGISTER) {
+            RegisterScreen(
+                onNavigateToHome  = { navController.navigate(Routes.HOME) { popUpTo(Routes.LOGIN) { inclusive = true } } },
+                onNavigateToLogin = { navController.popBackStack() }
             )
         }
 
@@ -67,3 +77,4 @@ fun PrestuttiNavGraph(startDestination: String = Routes.LOGIN) {
         }
     }
 }
+
