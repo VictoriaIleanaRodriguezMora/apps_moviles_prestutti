@@ -73,6 +73,9 @@ fun LoanDetailScreen(
                     DetailRow(label = "Ítem", value = loan.item)
                     if (loan.description.isNotBlank())
                         DetailRow(label = "Descripción", value = loan.description)
+                    loan.category?.let {
+                        DetailRow(label = "Categoría", value = it)
+                    }
                     DetailRow(
                         label = if (loan.type == LoanType.LENT) "Prestado a" else "Prestado por",
                         value = loan.personName

@@ -9,6 +9,7 @@ data class LoanEntity(
     val personName: String,
     val item: String,
     val description: String = "",
+    val category: String? = null,
     val dateMillis: Long,
     val dueDateMillis: Long? = null,
     val isReturned: Boolean = false,

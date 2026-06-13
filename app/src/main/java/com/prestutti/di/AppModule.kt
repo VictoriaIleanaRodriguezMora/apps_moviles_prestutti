@@ -25,7 +25,9 @@ object AppModule {
             context,
             PrestuttiDatabase::class.java,
             PrestuttiDatabase.DATABASE_NAME
-        ).build()
+        )
+            .fallbackToDestructiveMigration() // TODO: reemplazar por una Migration real antes de producción
+            .build()
 
     @Provides
     fun provideLoanDao(db: PrestuttiDatabase): LoanDao = db.loanDao()

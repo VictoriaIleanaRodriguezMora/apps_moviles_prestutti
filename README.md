@@ -34,7 +34,7 @@ Prototipo final: https://www.figma.com/proto/NUE9AcipLGOU3ud64pAHmH/Prestutti-en
 - [ ] 🔴 Traspaso de datos entre activities
   - [x] 🟡 Ver detalle de algo cargado en presté
   - [x] 🟡 Ver detalle de algo cargado en me prestaron
-- [ ] 🔴 Nueva categoría
+- [x] 🔴 Nueva categoría
 - [ ] 🔴 Pantalla editar perfil
   - [ ] 🔴 Cerrar sesión
   - [ ] 🔴 Eliminar cuenta

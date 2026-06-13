@@ -9,6 +9,7 @@ data class Loan(
     val personName: String,
     val item: String,
     val description: String = "",
+    val category: String? = null,
     val date: Date = Date(),
     val dueDate: Date? = null,
     val isReturned: Boolean = false,
