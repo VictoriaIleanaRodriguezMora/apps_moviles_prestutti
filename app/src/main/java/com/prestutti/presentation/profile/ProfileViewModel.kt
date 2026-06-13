@@ -2,6 +2,7 @@ package com.prestutti.presentation.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prestutti.data.local.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +22,7 @@ data class ProfileUiState(
 )
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor() : ViewModel() {
+class ProfileViewModel @Inject constructor(private val sessionManager: SessionManager) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
@@ -45,5 +46,9 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
             // TODO: eliminar cuenta en Firebase Auth / API
             _uiState.value = _uiState.value.copy(showDeleteDialog = false, isDeleted = true)
         }
+    }
+
+    fun cerrarSesion() {
+        sessionManager.guardarLoginState(false)
     }
 }

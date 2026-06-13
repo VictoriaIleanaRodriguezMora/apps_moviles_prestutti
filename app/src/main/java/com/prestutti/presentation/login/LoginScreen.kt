@@ -80,12 +80,14 @@ fun LoginScreen(
 
         // Usuario
         OutlinedTextField(
-            value = uiState.username,
-            onValueChange = viewModel::onUsernameChange,
-            label = { Text("Usuario") },
+            value = uiState.email,
+            onValueChange = viewModel::onEmailChange,
+            label = { Text("Email") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
+            //Abre el teclado con el @ a mano
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
 
         Spacer(modifier = Modifier.height(12.dp))
