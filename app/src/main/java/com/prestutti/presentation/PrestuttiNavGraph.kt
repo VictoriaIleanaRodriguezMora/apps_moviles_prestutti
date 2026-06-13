@@ -1,11 +1,14 @@
 package com.prestutti.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.prestutti.data.local.SessionManager
 import com.prestutti.presentation.add_loan.AddLoanScreen
 import com.prestutti.presentation.home.HomeScreen
 import com.prestutti.presentation.loan_detail.LoanDetailScreen
@@ -27,7 +30,19 @@ object Routes {
 }
 
 @Composable
-fun PrestuttiNavGraph(startDestination: String = Routes.LOGIN) {
+//fun PrestuttiNavGraph(startDestination: String = Routes.LOGIN) {
+fun PrestuttiNavGraph() {
+    //Obtenemos el contexto de Android para abri SharedPreferences
+    val context = LocalContext.current
+    //Iniciamos el SessionManager
+    val sessionManager = remember{ SessionManager(context) }
+    //La lógica del portero, elegimos dinámicamente dónde arrancar
+    val startDestination = if (sessionManager.estaLogueado()) {
+        Routes.HOME
+    } else {
+        Routes.LOGIN
+    }
+
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = startDestination) {
@@ -72,7 +87,16 @@ fun PrestuttiNavGraph(startDestination: String = Routes.LOGIN) {
         composable(Routes.PROFILE) {
             ProfileScreen(
                 onNavigateBack    = { navController.popBackStack() },
-                onAccountDeleted  = { navController.navigate(Routes.LOGIN) { popUpTo(0) { inclusive = true } } }
+                onAccountDeleted  = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(navController.graph.id) { inclusive = true }
+                    }
+                },
+                onLogout          = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(navController.graph.id) { inclusive = true }
+                    }
+                }
             )
         }
     }

@@ -31,9 +31,12 @@ import com.prestutti.ui.theme.PrestuttiPurple
 fun ProfileScreen(
     onNavigateBack: () -> Unit,
     onAccountDeleted: () -> Unit,
+    onLogout: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -43,6 +46,29 @@ fun ProfileScreen(
 
     LaunchedEffect(uiState.isDeleted) {
         if (uiState.isDeleted) onAccountDeleted()
+    }
+
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text("¿Cerrar sesión?", fontWeight = FontWeight.Bold) },
+            text = { Text("¿Estás seguro de que querés cerrar sesión?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLogoutDialog = false
+                        viewModel.cerrarSesion()    //Borra los datos locales
+                        onLogout()      //Redirige al login
+                    },
+                    colors = ButtonDefaults.textButtonColors(contentColor = PrestuttiPurple)
+                ) { Text("Sí, cerrar sesión") }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showLogoutDialog = false }
+                ) {Text("Cancelar")}
+            }
+        )
     }
 
     // ── Diálogo confirmar eliminación ─────────────────────────────────────────
@@ -174,7 +200,7 @@ fun ProfileScreen(
 
             // ── Eliminar cuenta ───────────────────────────────────────────────
             TextButton(
-                onClick = viewModel::onDeleteAccountRequest,
+                onClick = { showLogoutDialog = true},
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Cerrar sesión", color = Color.Gray)

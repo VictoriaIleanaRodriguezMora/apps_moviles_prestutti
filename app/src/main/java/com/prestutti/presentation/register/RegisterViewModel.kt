@@ -2,6 +2,7 @@ package com.prestutti.presentation.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prestutti.data.local.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +22,7 @@ data class RegisterUiState(
 )
 
 @HiltViewModel
-class RegisterViewModel @Inject constructor() : ViewModel() {
+class RegisterViewModel @Inject constructor(private val sessionManager: SessionManager) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
@@ -73,6 +74,11 @@ class RegisterViewModel @Inject constructor() : ViewModel() {
 
         viewModelScope.launch {
             _uiState.value = state.copy(isLoading = true)
+            sessionManager.registrarUsuario(
+                usuario = state.email,
+                password = state.password
+            )
+            sessionManager.guardarLoginState(true)
             // TODO: integrar registro real (Firebase Auth / API)
             _uiState.value = _uiState.value.copy(isLoading = false, isRegistered = true)
         }
