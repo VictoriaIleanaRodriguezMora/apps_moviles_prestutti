@@ -33,11 +33,11 @@ Prototipo final: https://www.figma.com/proto/NUE9AcipLGOU3ud64pAHmH/Prestutti-en
 - [x] 🔴 Pantalla de carga de objeto
 - [ ] 🔴 Traspaso de datos entre activities
   - [x] 🟡 Ver detalle de algo cargado en presté
-  - [ ] 🟡 Ver detalle de algo cargado en me prestaron
+  - [x] 🟡 Ver detalle de algo cargado en me prestaron
 - [ ] 🔴 Nueva categoría
 - [ ] 🔴 Pantalla editar perfil
-- [ ] 🔴 Cerrar sesión
-- [ ] 🔴 Eliminar cuenta
+  - [ ] 🔴 Cerrar sesión
+  - [ ] 🔴 Eliminar cuenta
 - [ ] 🔵 Editar preferencias
 
 # Recursos
