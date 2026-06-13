@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prestutti.domain.model.Loan
+import com.prestutti.domain.model.LoanType
+import com.prestutti.ui.theme.PrestuttiPink
 import com.prestutti.ui.theme.PrestuttiPurple
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -57,7 +59,9 @@ fun LentListScreen(
 @Composable
 private fun EmptyLentState(onAddLoan: () -> Unit) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(32.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -85,9 +89,12 @@ private fun EmptyLentState(onAddLoan: () -> Unit) {
 @Composable
 fun LoanItemCard(loan: Loan, onClick: () -> Unit) {
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val accentColor = if (loan.type == LoanType.LENT) PrestuttiPurple else PrestuttiPink
 
     Card(
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -96,17 +103,17 @@ fun LoanItemCard(loan: Loan, onClick: () -> Unit) {
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Avatar placeholder
+            // Avatar con inicial de la persona
             Surface(
                 modifier = Modifier.size(48.dp),
                 shape = androidx.compose.foundation.shape.CircleShape,
-                color = PrestuttiPurple.copy(alpha = 0.15f)
+                color = accentColor.copy(alpha = 0.15f)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
                         text = loan.personName.first().uppercaseChar().toString(),
                         fontWeight = FontWeight.Bold,
-                        color = PrestuttiPurple,
+                        color = accentColor,
                         fontSize = 20.sp
                     )
                 }
@@ -120,7 +127,7 @@ fun LoanItemCard(loan: Loan, onClick: () -> Unit) {
                 loan.dueDate?.let {
                     Text(
                         text = "Vence: ${dateFormat.format(it)}",
-                        color = Color(0xFFE040FB),
+                        color = accentColor,
                         fontSize = 12.sp
                     )
                 }
@@ -128,7 +135,12 @@ fun LoanItemCard(loan: Loan, onClick: () -> Unit) {
 
             if (loan.isReturned) {
                 Badge(containerColor = Color(0xFF4CAF50)) {
-                    Text("Devuelto", color = Color.White, fontSize = 10.sp, modifier = Modifier.padding(horizontal = 4.dp))
+                    Text(
+                        "Devuelto",
+                        color = Color.White,
+                        fontSize = 10.sp,
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    )
                 }
             }
         }

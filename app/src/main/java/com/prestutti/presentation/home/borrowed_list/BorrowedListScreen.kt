@@ -33,28 +33,7 @@ fun BorrowedListScreen(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = PrestuttiPink)
             }
             uiState.loans.isEmpty() -> {
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(32.dp).align(Alignment.Center),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text("¡Tu listado está vacío!", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = PrestuttiPink)
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text(
-                        text = "Parece que todavía no tenés nada prestado.\nComenzá a usar Prestutti con el botón +",
-                        textAlign = TextAlign.Center,
-                        color = Color.Gray,
-                        fontSize = 14.sp
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Button(
-                        onClick = onAddLoan,
-                        colors = ButtonDefaults.buttonColors(containerColor = PrestuttiPink),
-                        shape = RoundedCornerShape(25.dp)
-                    ) {
-                        Text("Agregar préstamo")
-                    }
-                }
+                EmptyBorrowedState(onAddLoan = onAddLoan)
             }
             else -> {
                 LazyColumn(
@@ -66,6 +45,41 @@ fun BorrowedListScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+// ── Estado vacío ─────────────────────────────────────────────────────────────
+
+@Composable
+private fun EmptyBorrowedState(onAddLoan: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            "¡Tu listado está vacío!",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = PrestuttiPink
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = "Parece que todavía no tenés nada prestado.\nComenzá a usar Prestutti con el botón +",
+            textAlign = TextAlign.Center,
+            color = Color.Gray,
+            fontSize = 14.sp
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Button(
+            onClick = onAddLoan,
+            colors = ButtonDefaults.buttonColors(containerColor = PrestuttiPink),
+            shape = RoundedCornerShape(25.dp)
+        ) {
+            Text("Agregar préstamo")
         }
     }
 }
