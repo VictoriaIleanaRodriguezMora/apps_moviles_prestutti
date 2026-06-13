@@ -35,7 +35,7 @@ class LoginViewModel @Inject constructor(private val sessionManager: SessionMana
         val state = _uiState.value
         //Validación de campos vacios
         if (state.email.isBlank() || state.password.isBlank()) {
-            _uiState.value = state.copy(error = "Completá usuario y contraseña")
+            _uiState.value = state.copy(error = "Completá email y contraseña")
             return
         }
 
@@ -69,12 +69,5 @@ class LoginViewModel @Inject constructor(private val sessionManager: SessionMana
             sessionManager.guardarLoginState(true)
             _uiState.value = _uiState.value.copy(isLoading = false, isLoggedIn = true)
         }
-
- /*       viewModelScope.launch {
-            _uiState.value = state.copy(isLoading = true)
-            // TODO: integrar Auth real (Firebase / API)
-            // Por ahora: login local sin validación de servidor
-            _uiState.value = _uiState.value.copy(isLoading = false, isLoggedIn = true)
-        }*/
     }
 }

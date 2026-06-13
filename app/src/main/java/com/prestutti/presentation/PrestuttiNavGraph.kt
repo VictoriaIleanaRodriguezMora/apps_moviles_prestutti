@@ -30,7 +30,6 @@ object Routes {
 }
 
 @Composable
-//fun PrestuttiNavGraph(startDestination: String = Routes.LOGIN) {
 fun PrestuttiNavGraph() {
     //Obtenemos el contexto de Android para abri SharedPreferences
     val context = LocalContext.current
