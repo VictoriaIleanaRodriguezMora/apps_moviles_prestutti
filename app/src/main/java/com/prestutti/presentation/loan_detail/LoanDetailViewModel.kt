@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,15 +34,15 @@ class LoanDetailViewModel @Inject constructor(
 
     private fun loadLoan() {
         viewModelScope.launch {
-            // Buscamos en la lista observable filtrando por id
-            repository.getLentLoans().collect { loans ->
-                val found = loans.firstOrNull { it.id == loanId }
-                    ?: run {
-                        // Buscar en borrowed si no estaba en lent
-                        null
-                    }
-                _uiState.value = LoanDetailUiState(loan = found, isLoading = false)
-            }
+            // Combinamos ambas listas (prestados y recibidos) y filtramos por id
+            combine(
+                repository.getLentLoans(),
+                repository.getBorrowedLoans()
+            ) { lent, borrowed -> lent + borrowed }
+                .collect { loans ->
+                    val found = loans.firstOrNull { it.id == loanId }
+                    _uiState.value = LoanDetailUiState(loan = found, isLoading = false)
+                }
         }
     }
 
