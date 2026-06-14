@@ -23,9 +23,9 @@ Prototipo final: https://www.figma.com/proto/NUE9AcipLGOU3ud64pAHmH/Prestutti-en
 
 - [x] 🟡 Cargar imagen de logo
 - [x] 🔴 Pantalla de registrarse
-- [ ] 🔴 Validación de campos de login
-- [ ] 🔴 Pantalla de Olvidé mi contraseña
-- [ ] 🔴 Realizar lógica de guardado en shared preferences del login
+- [x] 🔴 Validación de campos de login
+- [x] 🔴 Pantalla de Olvidé mi contraseña
+- [x] 🔴 Realizar lógica de guardado en shared preferences del login
 - [ ] 🔴 Realizar lógica de guardado en shared preferences de objetos prestados
 - [ ] 🔴 Imprimir mensaje
 - [x] 🔴 Pantalla principal vacía
@@ -36,8 +36,8 @@ Prototipo final: https://www.figma.com/proto/NUE9AcipLGOU3ud64pAHmH/Prestutti-en
   - [x] 🟡 Ver detalle de algo cargado en me prestaron
 - [x] 🔴 Nueva categoría
 - [ ] 🔴 Pantalla editar perfil
-  - [ ] 🔴 Cerrar sesión
-  - [ ] 🔴 Eliminar cuenta
+  - [x] 🔴 Cerrar sesión
+  - [x] 🔴 Eliminar cuenta
 - [ ] 🔵 Editar preferencias
 
 # Recursos
