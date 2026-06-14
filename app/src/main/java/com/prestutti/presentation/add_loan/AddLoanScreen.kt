@@ -167,7 +167,7 @@ fun AddLoanScreen(
     }
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Helpers - Fns auxiliares ───────────────────────────────────────────────────────────────────
 
 @Composable
 private fun SectionLabel(text: String) {
@@ -261,6 +261,7 @@ private fun CategoryChipGroup(
     }
 }
 
+// ?
 @Composable
 private fun AddCategoryDialog(
     accentColor: Color,
