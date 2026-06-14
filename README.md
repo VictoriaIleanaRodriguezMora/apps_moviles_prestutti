@@ -8,37 +8,4 @@ Figma de trabajo: https://www.figma.com/design/9J2Vf8zBqzIIGhqYeTutcP/Desarrollo
 Repositorio: 
 https://github.com/VictoriaIleanaRodriguezMora/desarrollo_apps_moviles_tp_final 
 
-Github project: https://github.com/users/VictoriaIleanaRodriguezMora/projects/1/ 
-
-Prototipo final: https://www.figma.com/proto/NUE9AcipLGOU3ud64pAHmH/Prestutti-en-alta?node-id=62-2805&starting-point-node-id=62%3A2805&t=fX86P98nvKqeZxEv-1 
-
-# Tareas pendientes:
-
-#### Prioridad
-- 🔴 Primaria
-- 🟡 Secundaria
-- 🔵 Opcional
-- 🟣 Extras no requeridos
-<hr>
-
-- [x] 🟡 Cargar imagen de logo
-- [x] 🔴 Pantalla de registrarse
-- [ ] 🔴 Validación de campos de login
-- [ ] 🔴 Pantalla de Olvidé mi contraseña
-- [ ] 🔴 Realizar lógica de guardado en shared preferences del login
-- [ ] 🔴 Realizar lógica de guardado en shared preferences de objetos prestados
-- [ ] 🔴 Imprimir mensaje
-- [x] 🔴 Pantalla principal vacía
-- [x] 🔴 Realizar lógica de 'alternar' entre "Presté/Me prestaron" en pantalla principal
-- [x] 🔴 Pantalla de carga de objeto
-- [ ] 🔴 Traspaso de datos entre activities
-  - [x] 🟡 Ver detalle de algo cargado en presté
-  - [x] 🟡 Ver detalle de algo cargado en me prestaron
-- [x] 🔴 Nueva categoría
-- [ ] 🔴 Pantalla editar perfil
-  - [ ] 🔴 Cerrar sesión
-  - [ ] 🔴 Eliminar cuenta
-- [ ] 🔵 Editar preferencias
-
-# Recursos
-
+Github project: https://github.com/users/VictoriaIleanaRodriguezMora/projects/1/
