@@ -72,6 +72,7 @@ class AddLoanViewModel @Inject constructor(
         update { copy(showAddCategoryDialog = show) }
     }
 
+    // Se llama cuando el usuario crea una categoria
     fun onAddCategory(name: String) {
         val trimmed = name.trim()
         if (trimmed.isBlank()) return
@@ -99,6 +100,7 @@ class AddLoanViewModel @Inject constructor(
         }
     }
 
+    // Se llama cuando el usuario toca "guardar" un prestamo
     fun onSaveClick() {
         val state = _uiState.value
         val errors = mutableMapOf<String, String>()
@@ -122,6 +124,8 @@ class AddLoanViewModel @Inject constructor(
                 dueDate     = state.dueDate,
                 type        = if (state.isLent) LoanType.LENT else LoanType.BORROWED
             )
+            // Llama a SaveLoanUseCase()
+            // app/src/main/java/com/prestutti/domain/usecase/SaveLoanUseCase.kt
             saveLoanUseCase(loan)
                 .onSuccess { update { copy(isSaving = false, isSaved = true) } }
                 .onFailure { e -> update { copy(isSaving = false, error = e.message) } }
