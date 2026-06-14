@@ -1,5 +1,6 @@
 package com.prestutti.presentation.profile
 
+import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,14 +19,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.prestutti.ui.theme.PrestuttiPurple
+import java.io.File
 
+//Crea un archivo temporal vacío, donde la cámara guardará la foto
+fun crearUriTemporal(context: Context): Uri{
+    val tempFile = File.createTempFile("Foto_perfil", ".jpg", context.cacheDir).apply {
+        createNewFile()
+        deleteOnExit()
+    }
+    return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", tempFile)
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
@@ -38,10 +50,24 @@ fun ProfileScreen(
 
     var showLogoutDialog by remember { mutableStateOf(false) }
 
-    val photoPickerLauncher = rememberLauncherForActivityResult(
+    //Herramientas necesarias para la cámara
+    val context = LocalContext.current
+    var uriDeCamara by remember { mutableStateOf<Uri?>(null)}
+
+    //Galeria
+    val galeriaLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.toString()?.let { viewModel.onPhotoSelected(it) }
+    ) { Uri: Uri? ->
+        Uri?.toString()?.let { viewModel.onPhotoSelected(it) }
+    }
+
+    //Cámara
+    val camaraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { exito ->
+        if (exito && uriDeCamara != null) {
+            viewModel.onPhotoSelected(uriDeCamara.toString())
+        }
     }
 
     LaunchedEffect(uiState.isDeleted) {
@@ -96,6 +122,7 @@ fun ProfileScreen(
     }
 
     Scaffold(
+        containerColor = Color.White,
         topBar = {
             TopAppBar(
                 title = { Text("Perfil", fontWeight = FontWeight.Bold) },
@@ -145,14 +172,21 @@ fun ProfileScreen(
             // Botones de foto
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedButton(
-                    onClick = { photoPickerLauncher.launch("image/*") },
+                    onClick = {
+                        // Creamos el archivo y abrimos la cámara real
+                        uriDeCamara = crearUriTemporal(context)
+                        camaraLauncher.launch(uriDeCamara!!)
+                    },
                     shape = RoundedCornerShape(20.dp),
                     border = androidx.compose.foundation.BorderStroke(1.dp, PrestuttiPurple)
                 ) {
                     Text("Hacer foto", color = PrestuttiPurple, fontSize = 12.sp)
                 }
                 OutlinedButton(
-                    onClick = { photoPickerLauncher.launch("image/*") },
+                    onClick = {
+                        // Abrimos la galería
+                        galeriaLauncher.launch("image/*")
+                    },
                     shape = RoundedCornerShape(20.dp),
                     border = androidx.compose.foundation.BorderStroke(1.dp, PrestuttiPurple)
                 ) {
@@ -172,20 +206,35 @@ fun ProfileScreen(
                 singleLine = true
             )
 
-            // Campos informativos (solo lectura en esta versión)
-            listOf("Apellido" to "", "Email" to uiState.email, "Soy" to "", "Nickname" to "").forEach { (label, value) ->
-                OutlinedTextField(
-                    value = value,
-                    onValueChange = {},
-                    label = { Text(label) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true,
-                    enabled = label == "Nombre"
-                )
-            }
+            OutlinedTextField(
+                value = uiState.lastName,
+                onValueChange = viewModel::onLastNameChange,
+                label = { Text("Apellido") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                singleLine = true
+            )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            OutlinedTextField(
+                value = uiState.email,
+                onValueChange = {},
+                label = { Text("Email") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                singleLine = true,
+                enabled = false
+            )
+
+            OutlinedTextField(
+                value = uiState.nickname,
+                onValueChange = viewModel::onNicknameChange,
+                label = { Text("Nickname") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // ── Guardar ───────────────────────────────────────────────────────
             Button(
@@ -195,10 +244,13 @@ fun ProfileScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = PrestuttiPurple),
                 enabled = !uiState.isSaving
             ) {
-                Text("Al guardar", fontWeight = FontWeight.Bold)
+                Text(
+                    text = if (uiState.isSaving) "Guardando..." else if (uiState.isSaved) "¡Guardado!" else "Al guardar",
+                    fontWeight = FontWeight.Bold
+                )
             }
 
-            // ── Eliminar cuenta ───────────────────────────────────────────────
+            // ── Cerrar Sesión ───────────────────────────────────────────────
             TextButton(
                 onClick = { showLogoutDialog = true},
                 modifier = Modifier.fillMaxWidth()
@@ -206,6 +258,7 @@ fun ProfileScreen(
                 Text("Cerrar sesión", color = Color.Gray)
             }
 
+            // ── Eliminar cuenta ───────────────────────────────────────────────
             TextButton(
                 onClick = viewModel::onDeleteAccountRequest,
                 modifier = Modifier.fillMaxWidth()

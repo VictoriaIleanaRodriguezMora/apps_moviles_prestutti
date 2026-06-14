@@ -26,6 +26,7 @@ import com.prestutti.ui.theme.PrestuttiPurple
 @Composable
 fun ForgotPasswordScreen(
     onNavigateBack: () -> Unit,
+    onInstructionsSent: () -> Unit,
     viewModel: ForgotPasswordViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -101,7 +102,7 @@ fun ForgotPasswordScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
-                    onClick = onNavigateBack,
+                    onClick = onInstructionsSent,
                     modifier = Modifier.fillMaxWidth().height(50.dp),
                     shape = RoundedCornerShape(25.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = PrestuttiPurple)

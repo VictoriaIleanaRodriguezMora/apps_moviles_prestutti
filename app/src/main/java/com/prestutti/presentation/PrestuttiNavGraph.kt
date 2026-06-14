@@ -16,6 +16,7 @@ import com.prestutti.presentation.loan_detail.LoanDetailScreen
 import com.prestutti.presentation.login.LoginScreen
 import com.prestutti.presentation.profile.ProfileScreen
 import com.prestutti.presentation.register.RegisterScreen
+import com.prestutti.presentation.forgot_password.NewPasswordScreen
 
 object Routes {
     const val LOGIN        = "login"
@@ -27,6 +28,8 @@ object Routes {
     const val REGISTER = "register"
 
     const val FORGOT_PASSWORD = "forgot_password"
+
+    const val NEW_PASSWORD = "new_password"
 
     fun addLoan(isLent: Boolean) = "add_loan/$isLent"
     fun loanDetail(id: Long)     = "loan_detail/$id"
@@ -104,7 +107,20 @@ fun PrestuttiNavGraph() {
 
         composable(Routes.FORGOT_PASSWORD) {
             ForgotPasswordScreen(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onInstructionsSent = { navController.navigate(Routes.NEW_PASSWORD) }
+            )
+        }
+
+        composable(Routes.NEW_PASSWORD) {
+            NewPasswordScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onPasswordResetSuccess = {
+                    // Si cambia la contraseña, lo mandamos al Login y borramos el historial
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.LOGIN) { inclusive = true }
+                    }
+                }
             )
         }
     }
