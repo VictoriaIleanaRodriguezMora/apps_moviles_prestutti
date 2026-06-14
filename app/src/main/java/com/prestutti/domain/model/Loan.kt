@@ -6,8 +6,8 @@ enum class LoanType { LENT, BORROWED }
 
 data class Loan(
     val id: Long = 0,
-    val personName: String,
-    val item: String,
+    val personName: String, // ¿A quién se lo prestaste?
+    val item: String, // ¿Qué prestaste?
     val description: String = "",
     val category: String? = null,
     val date: Date = Date(),

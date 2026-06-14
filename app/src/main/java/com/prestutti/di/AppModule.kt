@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.prestutti.data.local.LoanDao
 import com.prestutti.data.local.PrestuttiDatabase
-import com.prestutti.data.repository.LoanRepositoryImpl
+import com.prestutti.data.repository.LoanRepositoryImplementation
 import com.prestutti.domain.repository.LoanRepository
 import dagger.Binds
 import dagger.Module
@@ -14,6 +14,10 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+// Con Hilt, solo escribís @Inject y él lo arma solo. AppModule.kt le dice a Hilt cómo crear Room y cómo conectar LoanRepository con LoanRepositoryImpl.
+
+// LoanRepository es una interfaz. No tiene código real, solo promesas, no implementación
+// Hilt conecta la interfaz (LoanRepository) con la implementación real
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -30,6 +34,8 @@ object AppModule {
             .build()
 
     @Provides
+    // ¿Cómo llega el DAO al Repository?
+    // Hilt construye la cadena completa antes de que la app arranque:
     fun provideLoanDao(db: PrestuttiDatabase): LoanDao = db.loanDao()
 }
 
@@ -39,5 +45,19 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindLoanRepository(impl: LoanRepositoryImpl): LoanRepository
+    abstract fun bindLoanRepository(impl: LoanRepositoryImplementation): LoanRepository
+    // "Cada vez que alguien pida un LoanRepository, dale un LoanRepositoryImplementation"
+    // "LoanRepository" → darle LoanRepositoryImpl
 }
+/*
+* SaveLoanUseCase pide un LoanRepository (interfaz)
+* Hilt le da un LoanRepositoryImplementation (sin que SaveLoanUseCase lo sepa)
+* UseCase llama a  repository.saveLoan(loan)
+    En realidad está llamando a  LoanRepositoryImpl.saveLoan(loan)
+* LoanRepositoryImpl hace la conversión y llama al DAO
+
+SaveLoanUseCase nunca sabe que existe LoanRepositoryImpl. Solo conoce la interfaz LoanRepositor
+
+! Es como enchufar algo a la pared: uno usa el enchufe (la interfaz), sin saber cómo está cableado adentro (la implementación).
+* Hilt es el electricista que conecta todo antes de que uno llegue.
+ */

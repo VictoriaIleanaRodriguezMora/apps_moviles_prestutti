@@ -10,11 +10,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.prestutti.data.local.SessionManager
 import com.prestutti.presentation.add_loan.AddLoanScreen
+import com.prestutti.presentation.forgot_password.ForgotPasswordScreen
 import com.prestutti.presentation.home.HomeScreen
 import com.prestutti.presentation.loan_detail.LoanDetailScreen
 import com.prestutti.presentation.login.LoginScreen
 import com.prestutti.presentation.profile.ProfileScreen
 import com.prestutti.presentation.register.RegisterScreen
+import com.prestutti.presentation.forgot_password.NewPasswordScreen
 
 object Routes {
     const val LOGIN        = "login"
@@ -24,6 +26,10 @@ object Routes {
     const val PROFILE      = "profile"
 
     const val REGISTER = "register"
+
+    const val FORGOT_PASSWORD = "forgot_password"
+
+    const val NEW_PASSWORD = "new_password"
 
     fun addLoan(isLent: Boolean) = "add_loan/$isLent"
     fun loanDetail(id: Long)     = "loan_detail/$id"
@@ -50,7 +56,7 @@ fun PrestuttiNavGraph() {
             LoginScreen(
                 onNavigateToHome     = { navController.navigate(Routes.HOME) { popUpTo(Routes.LOGIN) { inclusive = true } } },
                 onNavigateToRegister = { navController.navigate(Routes.REGISTER) },
-                onNavigateToForgotPassword = { /* TODO: ForgotPasswordScreen */ }
+                onNavigateToForgotPassword = { navController.navigate(Routes.FORGOT_PASSWORD) }
             )
         }
 
@@ -94,6 +100,25 @@ fun PrestuttiNavGraph() {
                 onLogout          = {
                     navController.navigate(Routes.LOGIN) {
                         popUpTo(navController.graph.id) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(Routes.FORGOT_PASSWORD) {
+            ForgotPasswordScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onInstructionsSent = { navController.navigate(Routes.NEW_PASSWORD) }
+            )
+        }
+
+        composable(Routes.NEW_PASSWORD) {
+            NewPasswordScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onPasswordResetSuccess = {
+                    // Si cambia la contraseña, lo mandamos al Login y borramos el historial
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.LOGIN) { inclusive = true }
                     }
                 }
             )

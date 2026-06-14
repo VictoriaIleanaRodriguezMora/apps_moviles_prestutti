@@ -10,8 +10,11 @@ import kotlinx.coroutines.flow.map
 import java.util.Date
 import javax.inject.Inject
 
-class LoanRepositoryImpl @Inject constructor(
-    private val dao: LoanDao
+// Implementacion real. traducción.
+// De Room → a la app (LoanEntity → Loan)
+class LoanRepositoryImplementation @Inject constructor(
+    private val dao: LoanDao // ← Hilt también inyecta esto. es una interfaz igual que LoanRepository
+    // app/src/main/java/com/prestutti/data/local/LoanDao.kt
 ) : LoanRepository {
 
     override fun getLentLoans(): Flow<List<Loan>> =
@@ -21,7 +24,8 @@ class LoanRepositoryImpl @Inject constructor(
         dao.getBorrowedLoans().map { list -> list.map { it.toDomain() } }
 
     override suspend fun saveLoan(loan: Loan): Long =
-        dao.insertLoan(loan.toEntity())
+        dao.insertLoan(loan.toEntity()) // 1. convierte Loan → LoanEntity, 2. llama al DAO
+    // loan.toEntity() es una función de extensión definida en el mismo archivo:
 
     override suspend fun updateLoan(loan: Loan) =
         dao.updateLoan(loan.toEntity())
@@ -30,28 +34,31 @@ class LoanRepositoryImpl @Inject constructor(
         dao.deleteLoan(loan.toEntity())
 
     // ── Mappers ──────────────────────────────────────────────────────────────
+    // ¿Por qué hay que convertir? Porque Room solo entiende tipos simples como Long, String, Boolean. No entiende Date ni enums.
 
+    // De Room → a la app (LoanEntity → Loan)
     private fun LoanEntity.toDomain() = Loan(
         id          = id,
         personName  = personName,
         item        = item,
         description = description,
         category    = category,
-        date        = Date(dateMillis),
+        date        = Date(dateMillis), // Long → Date
         dueDate     = dueDateMillis?.let { Date(it) },
         isReturned  = isReturned,
-        type        = LoanType.valueOf(type)
+        type        = LoanType.valueOf(type) // String → enum
     )
 
+    // De la app → Room (Loan → LoanEntity)
     private fun Loan.toEntity() = LoanEntity(
         id            = id,
         personName    = personName,
         item          = item,
         description   = description,
         category      = category,
-        dateMillis    = date.time,
+        dateMillis    = date.time, // Date → Long
         dueDateMillis = dueDate?.time,
         isReturned    = isReturned,
-        type          = type.name
+        type          = type.name // enum → String
     )
 }

@@ -7,7 +7,13 @@ import com.prestutti.domain.usecase.GetLentLoansUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
-
+/*
+El ViewModel:
+- No hace lógica de datos (eso es del UseCase/Repository)
+- No hace UI (eso es de la Screen)
+- Solo transforma datos en "estado de pantalla" (UiState)
+- Sobrevive a las rotaciones de pantalla
+ */
 data class LentListUiState(
     val loans: List<Loan> = emptyList(),
     val isLoading: Boolean = true,
