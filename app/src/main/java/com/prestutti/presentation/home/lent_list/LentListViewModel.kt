@@ -24,8 +24,10 @@ data class LentListUiState(
 class LentListViewModel @Inject constructor(
     getLentLoans: GetLentLoansUseCase
 ) : ViewModel() {
-
-    val uiState: StateFlow<LentListUiState> = getLentLoans()
+    // LentListViewModel se conecta directamente al Flow de Room
+    // LentListViewModel recibe List<Loan>
+    // LentListScreen se redibuja
+    val uiState: StateFlow<LentListUiState> = getLentLoans() // UseCase/GetLoanUseCase
         .map { loans -> LentListUiState(loans = loans, isLoading = false) }
         .catch { e -> emit(LentListUiState(isLoading = false, error = e.message)) }
         .stateIn(

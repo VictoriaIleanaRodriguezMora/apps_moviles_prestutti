@@ -16,26 +16,25 @@ import com.prestutti.presentation.login.LoginScreen
 import com.prestutti.presentation.profile.ProfileScreen
 import com.prestutti.presentation.register.RegisterScreen
 
+// estos nombres, son los nombres de las carpetas dentro de /presentation
 object Routes {
     const val LOGIN        = "login"
     const val HOME         = "home"
     const val ADD_LOAN     = "add_loan/{isLent}"
     const val LOAN_DETAIL  = "loan_detail/{loanId}"
     const val PROFILE      = "profile"
-
     const val REGISTER = "register"
-
     fun addLoan(isLent: Boolean) = "add_loan/$isLent"
     fun loanDetail(id: Long)     = "loan_detail/$id"
 }
 
 @Composable
 fun PrestuttiNavGraph() {
-    //Obtenemos el contexto de Android para abri SharedPreferences
+    // Obtenemos el contexto de Android para abrir SharedPreferences
     val context = LocalContext.current
-    //Iniciamos el SessionManager
+    // Iniciamos el SessionManager
     val sessionManager = remember{ SessionManager(context) }
-    //La lógica del portero, elegimos dinámicamente dónde arrancar
+    // La lógica del portero, elegimos dinámicamente dónde arrancar
     val startDestination = if (sessionManager.estaLogueado()) {
         Routes.HOME
     } else {
@@ -43,12 +42,12 @@ fun PrestuttiNavGraph() {
     }
 
     val navController = rememberNavController()
-
+    //  registra todas las rutas posibles de la app.
     NavHost(navController = navController, startDestination = startDestination) {
 
         composable(Routes.LOGIN) {
             LoginScreen(
-                onNavigateToHome     = { navController.navigate(Routes.HOME) { popUpTo(Routes.LOGIN) { inclusive = true } } },
+                onNavigateToHome = { navController.navigate(Routes.HOME) { popUpTo(Routes.LOGIN) { inclusive = true } } },
                 onNavigateToRegister = { navController.navigate(Routes.REGISTER) },
                 onNavigateToForgotPassword = { /* TODO: ForgotPasswordScreen */ }
             )
