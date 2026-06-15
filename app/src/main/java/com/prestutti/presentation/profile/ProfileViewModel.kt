@@ -12,7 +12,9 @@ import javax.inject.Inject
 
 data class ProfileUiState(
     val displayName: String = "",
+    val lastName: String = "",
     val email: String = "",
+    val nickname: String = "",
     val photoUri: String? = null,
     val isSaving: Boolean = false,
     val isSaved: Boolean = false,
@@ -27,13 +29,36 @@ class ProfileViewModel @Inject constructor(private val sessionManager: SessionMa
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
-    fun onNameChange(value: String)   { _uiState.value = _uiState.value.copy(displayName = value) }
-    fun onPhotoSelected(uri: String)  { _uiState.value = _uiState.value.copy(photoUri = uri) }
+    init {
+        val perfilGuardado = sessionManager.obtenerPerfil()
+        val emailRegistrado = sessionManager.obtenerUsuarioRegistrado() ?: ""
+
+        _uiState.value = _uiState.value.copy(
+            displayName = perfilGuardado["nombre"] ?: "",
+            lastName = perfilGuardado["apellido"] ?: "",
+            nickname = perfilGuardado["nickname"] ?: "",
+            photoUri = perfilGuardado["photo"],
+            email = emailRegistrado
+        )
+    }
+
+    fun onNameChange(value: String)   { _uiState.value = _uiState.value.copy(displayName = value, isSaved = false) }
+    fun onLastNameChange(value: String) { _uiState.value = _uiState.value.copy(lastName = value, isSaved = false) }
+    fun onNicknameChange(value: String) { _uiState.value = _uiState.value.copy(nickname = value, isSaved = false) }
+    fun onPhotoSelected(uri: String)  { _uiState.value = _uiState.value.copy(photoUri = uri, isSaved = false) }
 
     fun onSaveProfile() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isSaving = true)
-            // TODO: persistir en DataStore / Room / Firebase
+            val state = _uiState.value
+
+            sessionManager.guardarPerfil(
+                nombre = state.displayName,
+                apellido = state.lastName,
+                nickname = state.nickname,
+                photoUri = state.photoUri
+            )
+
             _uiState.value = _uiState.value.copy(isSaving = false, isSaved = true)
         }
     }
@@ -43,7 +68,7 @@ class ProfileViewModel @Inject constructor(private val sessionManager: SessionMa
 
     fun onDeleteAccountConfirm() {
         viewModelScope.launch {
-            // TODO: eliminar cuenta en Firebase Auth / API
+
             _uiState.value = _uiState.value.copy(showDeleteDialog = false, isDeleted = true)
         }
     }

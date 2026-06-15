@@ -2,6 +2,7 @@ package com.prestutti.data.local
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -35,6 +36,30 @@ class SessionManager@Inject constructor(@ApplicationContext context: Context) {
     //Recupera la password guardada
     fun obtenerPasswordRegistrada(): String? {
         return prefs.getString("saved_password", null)
+    }
+
+    //Sobreescribe la contraseña anterior por una nueva
+    fun actualizarPassword(nuevaPassword: String) {
+        prefs.edit().putString("saved_password", nuevaPassword).apply()
+    }
+
+    //guarda todos los datos que escriba el usuario en el perfil
+    fun guardarPerfil(nombre: String, apellido: String, nickname: String, photoUri: String?){
+        prefs.edit()
+            .putString("perfil_nombre", nombre)
+            .putString("perfilr_apellido", apellido)
+            .putString("perfil_nickname", nickname)
+            .putString("perfil_photo", photoUri)    //Guarda la ruta de la foto
+            .apply()        //Guarda en memoria
+    }
+
+    fun obtenerPerfil(): Map<String, String?> {
+        return mapOf(
+            "nombre" to prefs.getString("perfil_nombre", ""),
+            "apellido" to prefs.getString("perfil_apellido", ""),
+            "nickname" to prefs.getString("perfil_nickname", ""),
+            "photo" to prefs.getString("perfil_photo", null)
+        )
     }
 
 }
