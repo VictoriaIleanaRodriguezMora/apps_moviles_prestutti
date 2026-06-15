@@ -35,7 +35,7 @@ Prototipo final: https://www.figma.com/proto/NUE9AcipLGOU3ud64pAHmH/Prestutti-en
   - [x] 🟡 Ver detalle de algo cargado en presté
   - [x] 🟡 Ver detalle de algo cargado en me prestaron
 - [x] 🔴 Nueva categoría
-- [ ] 🔴 Pantalla editar perfil
+- [x] 🔴 Pantalla editar perfil
   - [x] 🔴 Cerrar sesión
   - [x] 🔴 Eliminar cuenta
 - [ ] 🔵 Editar preferencias
