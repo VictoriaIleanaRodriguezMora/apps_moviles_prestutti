@@ -111,4 +111,5 @@ class SaveLoanUseCaseTest {
         assertTrue(result.isFailure)
         assertEquals("El ítem prestado/recibido no puede estar vacío", result.exceptionOrNull()?.message)
     }
+
 }
