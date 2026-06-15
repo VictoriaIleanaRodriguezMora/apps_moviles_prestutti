@@ -1,6 +1,8 @@
 package com.prestutti.presentation.register
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,8 +26,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prestutti.R
 import com.prestutti.ui.theme.PrestuttiPurple
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 
 @Composable
 fun RegisterScreen(
@@ -42,6 +42,7 @@ fun RegisterScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .safeDrawingPadding()          // ← respeta cámara, notch y barras del sistema
             .verticalScroll(rememberScrollState())
     ) {
         // ── Header morado ────────────────────────────────────────────────────
@@ -180,7 +181,12 @@ private fun RegisterField(
             shape = RoundedCornerShape(4.dp)
         )
         if (error != null) {
-            Text(text = error, color = MaterialTheme.colorScheme.error, fontSize = 11.sp, modifier = Modifier.padding(start = 4.dp, top = 2.dp))
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 11.sp,
+                modifier = Modifier.padding(start = 4.dp, top = 2.dp)
+            )
         }
     }
 }
