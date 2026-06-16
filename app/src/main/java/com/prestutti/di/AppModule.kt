@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.prestutti.data.local.LoanDao
 import com.prestutti.data.local.PrestuttiDatabase
+import com.prestutti.data.remote.dto.PrestuttiApiService
 import com.prestutti.data.repository.LoanRepositoryImplementation
 import com.prestutti.domain.repository.LoanRepository
 import dagger.Binds
@@ -12,6 +13,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 // Con Hilt, solo escribís @Inject y él lo arma solo. AppModule.kt le dice a Hilt cómo crear Room y cómo conectar LoanRepository con LoanRepositoryImpl.
@@ -37,6 +40,27 @@ object AppModule {
     // ¿Cómo llega el DAO al Repository?
     // Hilt construye la cadena completa antes de que la app arranque:
     fun provideLoanDao(db: PrestuttiDatabase): LoanDao = db.loanDao()
+
+    // Inyeccion de Retrofit
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(): Retrofit {
+        // Le enseñamos a Hilt ("el electricista") cómo construir la conexión a internet
+        return Retrofit.Builder()
+            // La URL base de la API pública que vamos a consumir
+            .baseUrl("https://jsonplaceholder.typicode.com/")
+            // Le decimos que use Gson para traducir el JSON de internet a Kotlin
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun providePrestuttiApiService(retrofit: Retrofit): PrestuttiApiService {
+        // Hilt toma el Retrofit que creamos arriba y construye la interfaz de la API
+        return retrofit.create(PrestuttiApiService::class.java)
+    }
 }
 
 @Module

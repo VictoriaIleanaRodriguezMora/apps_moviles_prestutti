@@ -4,6 +4,8 @@ import android.app.DatePickerDialog
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -119,6 +121,35 @@ fun AddLoanScreen(
 
             // ── A quién ───────────────────────────────────────────────────────
             SectionLabel(text = if (uiState.isLent) "¿A quién lo prestás?" else "¿Quién te lo presta?")
+
+            // Inicio Bloque API
+            if (uiState.networkError != null) {
+                // Manejo visual de error: Se quedó sin internet
+                Text(
+                    text = uiState.networkError ?: "",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+            } else if (uiState.suggestedContacts.isNotEmpty()) {
+                // Carrusel de contactos sugeridos (JSONPlaceholder)
+                Text("Contactos sugeridos (Nube):", style = MaterialTheme.typography.labelMedium)
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) {
+                    items(uiState.suggestedContacts) { contact ->
+                        AssistChip(
+                            onClick = {
+                                // ¡Magia!: Autocompletar el campo de texto con el nombre de la API
+                                viewModel.onPersonNameChange(contact.name)
+                            },
+                            label = { Text(contact.name) }
+                        )
+                    }
+                }
+            }
+
             OutlinedTextField(
                 value = uiState.personName,
                 onValueChange = viewModel::onPersonNameChange,

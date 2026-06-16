@@ -1,9 +1,12 @@
 package com.prestutti.presentation.add_loan
 
 import android.content.Context
+import android.net.http.HttpException
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prestutti.data.remote.dto.ContactDto
+import com.prestutti.data.remote.dto.PrestuttiApiService
 import com.prestutti.domain.model.Loan
 import com.prestutti.domain.model.LoanType
 import com.prestutti.domain.usecase.SaveLoanUseCase
@@ -13,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
 import java.util.Date
 import javax.inject.Inject
 
@@ -29,7 +33,9 @@ data class AddLoanUiState(
     val isSaving: Boolean = false,
     val isSaved: Boolean = false,
     val fieldErrors: Map<String, String> = emptyMap(),
-    val error: String? = null
+    val error: String? = null,
+    val suggestedContacts: List<ContactDto> = emptyList(),
+    val networkError: String? = null
 )
 
 private const val PREFS_NAME = "prestutti_prefs"
@@ -43,6 +49,7 @@ private val defaultCategories = listOf(
 class AddLoanViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val saveLoanUseCase: SaveLoanUseCase,
+    private val apiService: PrestuttiApiService,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -56,9 +63,38 @@ class AddLoanViewModel @Inject constructor(
     )
     val uiState: StateFlow<AddLoanUiState> = _uiState.asStateFlow()
 
+    init {
+        // Llamamos a internet apenas inicia el ViewModel
+        fetchSuggestedContacts()
+    }
+
     private fun loadCategories(): List<String> {
         val custom = prefs.getStringSet(KEY_CUSTOM_CATEGORIES, emptySet()) ?: emptySet()
         return defaultCategories + custom.sorted()
+    }
+
+    // FUNCIÓN NUEVA: Llamada asincrónica a Internet con "Manejo de Errores"
+    private fun fetchSuggestedContacts() {
+        viewModelScope.launch {
+            try {
+                // 1. Limpiamos cualquier error previo
+                update { copy(networkError = null) }
+
+                // 2. Hacemos la llamada al servidor JSONPlaceholder a través de Retrofit
+                val contacts = apiService.getSuggestedContacts()
+
+                // 3. Si tiene éxito, guardamos los datos en tu UiState centralizado
+                update { copy(suggestedContacts = contacts) }
+
+            } catch (e: IOException) {
+                // CATCH 1: Manejo de errores de conectividad (Regla del Hito 2)
+                update { copy(networkError = "Sin conexión a internet. Mostrando solo tus contactos locales.") }
+
+            } catch (e: Exception) {
+                // CATCH 3: Por si ocurre cualquier otro error imprevisto
+                update { copy(networkError = "Ocurrió un error al cargar las sugerencias.") }
+            }
+        }
     }
 
     fun onItemChange(value: String)        { update { copy(item = value) } }
