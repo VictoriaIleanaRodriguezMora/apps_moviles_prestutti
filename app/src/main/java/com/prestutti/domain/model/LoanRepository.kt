@@ -6,8 +6,10 @@ import kotlinx.coroutines.flow.Flow
 // Lo que conoce es getLentLoans(), esos metodos. Si cambia el contenido de estos, la UI no se entera
 
 // LoanRepository es una interfaz. No tiene código real, solo promesas, no implementación
+// SUBFLUJO HILT. "Cada vez que alguien pida un LoanRepository, dale un LoanRepositoryImplementation"
+// De acá, nos  vamos a /data/repository/LoanRepositoryImplementation.kt
 interface LoanRepository {
-    fun getLentLoans(): Flow<List<Loan>>
+    fun getLentLoans(): Flow<List<Loan>> // Es llamado en /domain/usecase/GetLentLoansUseCase.kt
     fun getBorrowedLoans(): Flow<List<Loan>>
     suspend fun saveLoan(loan: Loan): Long // es llamado por prestutti/domain/usecase/SaveLoanUseCase.kt
     suspend fun updateLoan(loan: Loan)

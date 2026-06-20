@@ -11,14 +11,15 @@ import java.util.Date
 import javax.inject.Inject
 
 // Implementacion real. traducción.
-// De Room → a la app (LoanEntity → Loan)
 class LoanRepositoryImplementation @Inject constructor(
     private val dao: LoanDao // ← Hilt también inyecta esto. es una interfaz igual que LoanRepository
-    // app/src/main/java/com/prestutti/data/local/LoanDao.kt
+    // /data/local/LoanDao.kt
 ) : LoanRepository {
 
-    override fun getLentLoans(): Flow<List<Loan>> =
-        dao.getLentLoans().map { list -> list.map { it.toDomain() } }
+    // Room ejecuta el SQL
+    override fun getLentLoans(): Flow<List<Loan>> = // Room emite la lista
+        dao.getLentLoans().map { list -> list.map { it.toDomain() } } // LoanEntity → Loan
+    // LentListViewModel recibe List<Loan>
 
     override fun getBorrowedLoans(): Flow<List<Loan>> =
         dao.getBorrowedLoans().map { list -> list.map { it.toDomain() } }

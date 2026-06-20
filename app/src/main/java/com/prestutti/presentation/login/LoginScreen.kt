@@ -32,8 +32,9 @@ fun LoginScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var passwordVisible by remember { mutableStateOf(false) }
 
+    // La pantalla observa el estado del ViewModel
     LaunchedEffect(uiState.isLoggedIn) {
-        if (uiState.isLoggedIn) onNavigateToHome()
+        if (uiState.isLoggedIn) onNavigateToHome() // Acá navega a /home. Los archivos de UI y ViewModel  de home están en /presentation/home
     }
 
     Column(
@@ -79,9 +80,10 @@ fun LoginScreen(
         }
 
         // Usuario
+        // Cada vez que el usuario escribe en el campo email
         OutlinedTextField(
             value = uiState.email,
-            onValueChange = viewModel::onEmailChange,
+            onValueChange = viewModel::onEmailChange, // llama al ViewModel
             label = { Text("Email") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
@@ -129,6 +131,7 @@ fun LoginScreen(
 
         // Botón Ingresar
         Button(
+            // LoginScreen llama a onLoginClick del ViewModel:
             onClick = viewModel::onLoginClick,
             modifier = Modifier
                 .fillMaxWidth()

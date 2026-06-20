@@ -22,7 +22,7 @@ data class LoginUiState(
 class LoginViewModel @Inject constructor(private val sessionManager: SessionManager) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
-
+// Actualiza el estado. La pantalla se redibuja automáticamente con el nuevo valor.
     fun onEmailChange(value: String) {
         _uiState.value = _uiState.value.copy(email = value, error = null)
     }
@@ -31,6 +31,7 @@ class LoginViewModel @Inject constructor(private val sessionManager: SessionMana
         _uiState.value = _uiState.value.copy(password = value, error = null)
     }
 
+    // En LoginScreen se presionó "Ingresar"
     fun onLoginClick() {
         val state = _uiState.value
         //Validación de campos vacios

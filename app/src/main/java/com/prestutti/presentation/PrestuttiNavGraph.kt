@@ -1,11 +1,8 @@
 package com.prestutti.presentation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,71 +10,46 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.prestutti.data.local.SessionManager
 import com.prestutti.presentation.add_loan.AddLoanScreen
-import com.prestutti.presentation.forgot_password.ForgotPasswordScreen
-import com.prestutti.presentation.forgot_password.NewPasswordScreen
 import com.prestutti.presentation.home.HomeScreen
 import com.prestutti.presentation.loan_detail.LoanDetailScreen
 import com.prestutti.presentation.login.LoginScreen
-import com.prestutti.presentation.onboarding.OnboardingScreen
-import com.prestutti.presentation.onboarding.OnboardingViewModel
 import com.prestutti.presentation.profile.ProfileScreen
 import com.prestutti.presentation.register.RegisterScreen
 
+// estos nombres, son los nombres de las carpetas dentro de /presentation
 object Routes {
-    const val ONBOARDING      = "onboarding"
-    const val LOGIN           = "login"
-    const val REGISTER        = "register"
-    const val HOME            = "home"
-    const val ADD_LOAN        = "add_loan/{isLent}"
-    const val LOAN_DETAIL     = "loan_detail/{loanId}"
-    const val PROFILE         = "profile"
-    const val FORGOT_PASSWORD = "forgot_password"
-    const val NEW_PASSWORD    = "new_password"
-
+    const val LOGIN        = "login"
+    const val HOME         = "home"
+    const val ADD_LOAN     = "add_loan/{isLent}"
+    const val LOAN_DETAIL  = "loan_detail/{loanId}"
+    const val PROFILE      = "profile"
+    const val REGISTER = "register"
     fun addLoan(isLent: Boolean) = "add_loan/$isLent"
     fun loanDetail(id: Long)     = "loan_detail/$id"
 }
 
 @Composable
 fun PrestuttiNavGraph() {
-    val navController = rememberNavController()
+    // Obtenemos el contexto de Android para abrir SharedPreferences
     val context = LocalContext.current
-    val sessionManager = remember { SessionManager(context) }
-
-    // ── Onboarding ViewModel para saber si ya fue visto ───────────────────────
-    val onboardingViewModel: OnboardingViewModel = hiltViewModel()
-    val onboardingState by onboardingViewModel.uiState.collectAsStateWithLifecycle()
-
-    // Mientras DataStore carga no mostramos nada
-    if (onboardingState.isLoading) return
-
-    // Lógica de startDestination:
-    // 1. Si nunca vio el onboarding → onboarding
-    // 2. Si ya lo vio y está logueado → home
-    // 3. Si ya lo vio pero no está logueado → login
-    val startDestination = when {
-        !onboardingState.onboardingCompleted -> Routes.ONBOARDING
-        sessionManager.estaLogueado()        -> Routes.HOME
-        else                                 -> Routes.LOGIN
+    // Iniciamos el SessionManager
+    val sessionManager = remember{ SessionManager(context) }
+    // La lógica del portero, elegimos dinámicamente dónde arrancar
+    val startDestination = if (sessionManager.estaLogueado()) {
+        Routes.HOME
+    } else {
+        Routes.LOGIN
     }
 
+    val navController = rememberNavController()
+    //  registra todas las rutas posibles de la app.
     NavHost(navController = navController, startDestination = startDestination) {
-
-        composable(Routes.ONBOARDING) {
-            OnboardingScreen(
-                onNavigateToLogin = {
-                    navController.navigate(Routes.LOGIN) {
-                        popUpTo(Routes.ONBOARDING) { inclusive = true }
-                    }
-                }
-            )
-        }
 
         composable(Routes.LOGIN) {
             LoginScreen(
-                onNavigateToHome           = { navController.navigate(Routes.HOME) { popUpTo(Routes.LOGIN) { inclusive = true } } },
-                onNavigateToRegister       = { navController.navigate(Routes.REGISTER) },
-                onNavigateToForgotPassword = { navController.navigate(Routes.FORGOT_PASSWORD) }
+                onNavigateToHome = { navController.navigate(Routes.HOME) { popUpTo(Routes.LOGIN) { inclusive = true } } },
+                onNavigateToRegister = { navController.navigate(Routes.REGISTER) },
+                onNavigateToForgotPassword = { /* TODO: ForgotPasswordScreen */ }
             )
         }
 
@@ -90,8 +62,8 @@ fun PrestuttiNavGraph() {
 
         composable(Routes.HOME) {
             HomeScreen(
-                onNavigateToAddLoan    = { isLent -> navController.navigate(Routes.addLoan(isLent)) },
-                onNavigateToProfile    = { navController.navigate(Routes.PROFILE) },
+                onNavigateToAddLoan   = { isLent -> navController.navigate(Routes.addLoan(isLent)) },
+                onNavigateToProfile   = { navController.navigate(Routes.PROFILE) },
                 onNavigateToLoanDetail = { id -> navController.navigate(Routes.loanDetail(id)) }
             )
         }
@@ -112,36 +84,19 @@ fun PrestuttiNavGraph() {
 
         composable(Routes.PROFILE) {
             ProfileScreen(
-                onNavigateBack   = { navController.popBackStack() },
-                onAccountDeleted = {
+                onNavigateBack    = { navController.popBackStack() },
+                onAccountDeleted  = {
                     navController.navigate(Routes.LOGIN) {
                         popUpTo(navController.graph.id) { inclusive = true }
                     }
                 },
-                onLogout = {
+                onLogout          = {
                     navController.navigate(Routes.LOGIN) {
                         popUpTo(navController.graph.id) { inclusive = true }
-                    }
-                }
-            )
-        }
-
-        composable(Routes.FORGOT_PASSWORD) {
-            ForgotPasswordScreen(
-                onNavigateBack     = { navController.popBackStack() },
-                onInstructionsSent = { navController.navigate(Routes.NEW_PASSWORD) }
-            )
-        }
-
-        composable(Routes.NEW_PASSWORD) {
-            NewPasswordScreen(
-                onNavigateBack         = { navController.popBackStack() },
-                onPasswordResetSuccess = {
-                    navController.navigate(Routes.LOGIN) {
-                        popUpTo(Routes.LOGIN) { inclusive = true }
                     }
                 }
             )
         }
     }
 }
+
