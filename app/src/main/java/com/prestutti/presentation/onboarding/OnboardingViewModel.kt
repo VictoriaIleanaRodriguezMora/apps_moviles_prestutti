@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "prestutti_prefs")
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "prestutti_onboarding")
 
 private val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
 
