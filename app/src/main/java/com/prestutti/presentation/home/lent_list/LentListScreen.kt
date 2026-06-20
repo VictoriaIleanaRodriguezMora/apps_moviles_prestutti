@@ -65,10 +65,10 @@ private fun EmptyLentState(onAddLoan: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("¡Unite a Prestutti!", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = PrestuttiPurple)
+        Text("¡Tu listado está vacío!", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = PrestuttiPurple)
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "¡Tu listado está vacío!\nParece que todavía no has prestado nada.\nComenzá a usar Prestutti con el botón +",
+            text = "Parece que todavía no prestaste nada.\nComenzá a usar Prestutti con el botón +",
             textAlign = TextAlign.Center,
             color = Color.Gray,
             fontSize = 14.sp

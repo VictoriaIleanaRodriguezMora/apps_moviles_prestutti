@@ -68,7 +68,7 @@ private fun EmptyBorrowedState(onAddLoan: () -> Unit) {
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "Parece que todavía no tenés nada prestado.\nComenzá a usar Prestutti con el botón +",
+            text = "Parece que todavía te prestaron nada.\nComenzá a usar Prestutti con el botón +",
             textAlign = TextAlign.Center,
             color = Color.Gray,
             fontSize = 14.sp
