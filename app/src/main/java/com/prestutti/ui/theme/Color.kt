@@ -11,5 +11,8 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val PrestuttiPurple = Color(0xFF7B2FBE)
+val PrestuttiPurpleOnboarding = Color(0xFF8300FF)
 
 val PrestuttiPink   = Color(0xFFE91E8C)
+
+val FondoGris = Color(0xFF424242)
