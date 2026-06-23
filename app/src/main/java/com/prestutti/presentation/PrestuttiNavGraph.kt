@@ -1,8 +1,13 @@
 package com.prestutti.presentation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -22,6 +27,7 @@ import com.prestutti.presentation.onboarding.OnboardingScreen
 import com.prestutti.presentation.onboarding.OnboardingViewModel
 import com.prestutti.presentation.profile.ProfileScreen
 import com.prestutti.presentation.register.RegisterScreen
+import com.prestutti.ui.theme.PrestuttiPurple
 
 object Routes {
     const val ONBOARDING      = "onboarding"
@@ -44,17 +50,17 @@ fun PrestuttiNavGraph() {
     val context = LocalContext.current
     val sessionManager = remember { SessionManager(context) }
 
-    // ── Onboarding ViewModel para saber si ya fue visto ───────────────────────
     val onboardingViewModel: OnboardingViewModel = hiltViewModel()
     val onboardingState by onboardingViewModel.uiState.collectAsStateWithLifecycle()
 
-    // Mientras DataStore carga no mostramos nada
-    if (onboardingState.isLoading) return
+    // Mientras DataStore carga mostramos un spinner en lugar de navegar
+    if (onboardingState.isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(color = PrestuttiPurple)
+        }
+        return
+    }
 
-    // Lógica de startDestination:
-    // 1. Si nunca vio el onboarding → onboarding
-    // 2. Si ya lo vio y está logueado → home
-    // 3. Si ya lo vio pero no está logueado → login
     val startDestination = when {
         !onboardingState.onboardingCompleted -> Routes.ONBOARDING
         sessionManager.estaLogueado()        -> Routes.HOME
